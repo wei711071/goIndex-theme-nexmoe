@@ -1,16 +1,5 @@
 // 在head 中 加载 必要静态
 document.write('<link rel="stylesheet" href="' + ThemeConfig.url + '/dist/css/app.6461726b.css">');
-// Dplayer
-document.write('<script src="//cdn.jsdelivr.net/npm/hls.js@1.0.7/dist/hls.min.js"></script>');
-document.write('<script src="//cdn.jsdelivr.net/npm/dashjs@4.0.1/dist/dash.all.debug.min.js"></script>');
-document.write('<script src="//cdn.jsdelivr.net/npm/flv.js@1.6.1/dist/flv.min.js"></script>');
-document.write('<script src="//cdn.jsdelivr.net/npm/cdnbye@latest"></script>');
-document.write('<script src="//cdn.jsdelivr.net/npm/dplayer@1.26.0/dist/DPlayer.min.js"></script>');
-// plyr
-document.write('<script src="//cdn.rawgit.com/video-dev/hls.js/18bb552/dist/hls.min.js"></script>');
-document.write('<script src="//cdn.dashjs.org/latest/dash.all.min.js"></script>');
-document.write('<script src="//cdn.jsdelivr.net/npm/plyr@3.6.8/dist/plyr.min.js"></script>');
-// markdown支持
 document.write('<script src="//cdn.jsdelivr.net/npm/markdown-it@12.1.0/dist/markdown-it.min.js"></script>');
 document.write('<style>.bimg{background-image: url(' + ThemeConfig.bimg + ');}.mdui-appbar .mdui-toolbar{height:56px;font-size:1pc}.mdui-toolbar>*{padding:0 6px;margin:0 2px}.mdui-toolbar>i{opacity:.5}.mdui-toolbar>i{padding:0}.mdui-toolbar>a:hover,a.active,a.mdui-typo-headline{opacity:1}.mdui-list-item{transition:none}.mdui-list>.th{background-color:initial}.mdui-list-item>a{width:100%;line-height:3pc}.mdui-list-item{margin:2px 0;padding:0}.mdui-toolbar>a:last-child{opacity:1}.mdui-container{width:100%!important;margin:0 auto;}</style>');
 
@@ -25,20 +14,21 @@ function init() {
     var search_text = model.is_search_page ? (model.q || '') : '';
 
     // 搜索
+    const isMobile = Os.isMobile;
     var search_bar = `
                     <div class="titleBar_item search_bar">
                         <a class="titleBar_link searchBar_link" onclick="if($('.search_bar').hasClass('searchBar_link') && $('.searchBar_form>input').val()) $('.searchBar_form').submit();">
                             <i class="mdui-icon material-icons"></i>
                         </a>
                         <form class="searchBar_form titleBar_exhibit" method="get" action="/${cur}:search">
-                            <input type="text" name="q" placeholder="Search in current drive" value="${search_text}" />
+                            <input type="text" name="q" autocomplete ="off" placeholder="我是搜尋" value="${search_text}" />
                         </form>
                     </div>`;
     // 盘
     var pan_bar = `
                     <div class="titleBar_item titleBar_pan">
                         <a class="titleBar_link panBar_link"><i></i></a>
-                        <div class="menu_list titleBar_exhibit"><p>Netdisc Drive</p>`;
+                        <div class="menu_list titleBar_exhibit"><p>前往</p>`;
     names.forEach((name, idx) => {
         pan_bar += `<a  class="menu_list_item"  href="/${idx}:/">${name}</a>`;
     });
@@ -301,6 +291,8 @@ function list(path) {
 
     var password = localStorage.getItem('password' + path);
     $('#list').html(`<div class="mdui-progress"><div class="mdui-progress-indeterminate"></div></div>`);
+    $('#readme_md').hide().html('');
+    $('#head_md').hide().html('');
 
     /**
      * 列目录请求成功返回数据后的回调
@@ -400,14 +392,13 @@ function append_files_to_list(path, files) {
     var is_firstpage = '0' == $list.data('curPageIndex');
 
     html = "";
-    let targetFiles = [];
-    for (i in files) {
-        var item = files[i];
-        var p = path + item.name + '/';
-        if (item['size'] == undefined) {
-            item['size'] = "";
-        }
-
+  let targetFiles = [];
+  for (i in files) {
+    var item = files[i];
+    var p = path+encodeURIComponent(item.name) + '/';
+    if (item['size'] == undefined) {
+      item['size'] = "";
+    }
         item['modifiedTime'] = utc2beijing(item['modifiedTime']);
         item['size'] = formatFileSize(item['size']);
         if (item['mimeType'] == 'application/vnd.google-apps.folder') {
@@ -421,9 +412,9 @@ function append_files_to_list(path, files) {
               </a>
           </li>`;
         } else {
-            var p = path + item.name;
-            const filepath = path + item.name;
-            var c = "file";
+            var p = path+encodeURIComponent(item.name);
+      const filepath = path+encodeURIComponent(item.name);
+      var c = "file";
             // 当加载完最后一页后，才显示 README ，否则会影响滚动事件
             if (is_lastpage_loaded && item.name == "README.md") {
                 get_file(p, item, function(data) {
@@ -434,6 +425,7 @@ function append_files_to_list(path, files) {
                 get_file(p, item, function(data) {
                     markdown("#head_md", data);
                 });
+                   continue
             }
             var ext = p.split('.').pop().toLowerCase();
             const file_view = ThemeConfig.view;
@@ -635,23 +627,25 @@ function append_search_result_to_list(files) {
               </a>
           </li>`;
         } else {
-            var c = "file";
-            var ext = item.name.split('.').pop().toLowerCase();
-            const file_view = ThemeConfig.view;
-            if (file_view.indexOf(`|${ext}|`) >= 0) {
-                c += " view";
-            }
-            html += `<li class="mdui-list-item file mdui-ripple" target="_blank"><a id="${item['id']}" gd-type="${item.mimeType}" onclick="onSearchResultItemClick(this)" class="${c}">
-            <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate" title="${item.name}">
-            <i class="mdui-icon material-icons">insert_drive_file</i>
-              ${item.name}
-            </div>
-            <div class="mdui-col-sm-3 mdui-text-right">${item['modifiedTime']}</div>
-            <div class="mdui-col-sm-2 mdui-text-right">${item['size']}</div>
-            </a>
-        </li>`;
-        }
+            switch(item.name) { // 隱藏項目
+				case 'README.md':
+					continue
+				case 'HEAD.md':
+					continue
+			}
+      var c = "file";
+      var ext = item.name.split('.').pop().toLowerCase();
+      html += `<li class="mdui-list-item file mdui-ripple" target="_blank"><a id="${item['id']}" gd-type="${item.mimeType}" onclick="onSearchResultItemClick(this)" class="${c}">
+	          <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate" title="${item.name}">
+	          <i class="mdui-icon material-icons">insert_drive_file</i>
+	            ${item.name}
+	          </div>
+	          <div class="mdui-col-sm-3 mdui-text-right">${item['modifiedTime']}</div>
+	          <div class="mdui-col-sm-2 mdui-text-right">${item['size']}</div>
+	          </a>
+	      </li>`;
     }
+  }
 
     // 是第1页时，去除横向loading条
     $list.html(($list.data('curPageIndex') == '0' ? '' : $list.html()) + html);
@@ -1272,20 +1266,20 @@ function utc2beijing(utc_datetime) {
 
 // bytes自适应转换到KB,MB,GB
 function formatFileSize(bytes) {
-    if (bytes >= 1000000000) {
-        bytes = (bytes / 1000000000).toFixed(2) + ' GB';
-    } else if (bytes >= 1000000) {
-        bytes = (bytes / 1000000).toFixed(2) + ' MB';
-    } else if (bytes >= 1000) {
-        bytes = (bytes / 1000).toFixed(2) + ' KB';
-    } else if (bytes > 1) {
-        bytes = bytes + ' bytes';
-    } else if (bytes == 1) {
-        bytes = bytes + ' byte';
-    } else {
-        bytes = '';
-    }
-    return bytes;
+  if (bytes >= 1073741824) {
+    bytes = (bytes / 1073741824).toFixed(2) + ' GB';
+  } else if (bytes >= 1048576) {
+    bytes = (bytes / 1048576).toFixed(2) + ' MB';
+  } else if (bytes >= 1024) {
+    bytes = (bytes / 1024).toFixed(2) + ' KB';
+  } else if (bytes > 1) {
+    bytes = bytes + ' bytes';
+  } else if (bytes == 1) {
+    bytes = bytes + ' byte';
+  } else {
+    bytes = '';
+  }
+  return bytes;
 }
 
 String.prototype.trim = function(char) {
