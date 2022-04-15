@@ -200,7 +200,7 @@ function nav(path) {
     //               <i class="mdui-icon material-icons">search</i>
     //           </button>
     //           <form id="search_bar_form" method="get" action="/${cur}:search">
-    //           <input class="mdui-textfield-input" type="text" name="q" placeholder="Search in current drive" value="${search_text}"/>
+    //           <input class="mdui-textfield-input" type="text" name="q" placeholder="我要搜尋..." value="${search_text}"/>
     //           </form>
     //           <button class="mdui-textfield-close mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">close</i></button>
     //       </div>`;
@@ -267,11 +267,11 @@ function list(path) {
     <ul class="mdui-list"> 
      <li class="mdui-list-item th"> 
       <div class="mdui-col-xs-12 mdui-col-sm-7">
-       文件
+       檔案
   <i class="mdui-icon material-icons icon-sort" data-sort="name" data-order="more">expand_more</i>
       </div> 
       <div class="mdui-col-sm-3 mdui-text-right">
-       修改时间
+       時間
   <i class="mdui-icon material-icons icon-sort" data-sort="date" data-order="downward">expand_more</i>
       </div> 
       <div class="mdui-col-sm-2 mdui-text-right">
@@ -284,7 +284,7 @@ function list(path) {
    <div class="mdui-row"> 
     <ul id="list" class="mdui-list"> 
     </ul> 
-    <div id="count" class="mdui-hidden mdui-center mdui-text-center mdui-m-b-3 mdui-typo-subheading mdui-text-color-blue-grey-500">共 <span class="number"></span> 项</div>
+    <div id="count" class="mdui-hidden mdui-center mdui-text-center mdui-m-b-3 mdui-typo-subheading mdui-text-color-blue-grey-500">共 <span class="number"></span> 項</div>
    </div>
   `;
     $('#content').html(content);
@@ -370,7 +370,7 @@ function list(path) {
         successResultCallback,
         function(path) {
             $('#spinner').remove();
-            var pass = prompt("目录加密, 请输入密码", "");
+            var pass = prompt("窩有密碼, 請輸入通關密語", "");
             localStorage.setItem('password' + path, pass);
             if (pass != null && pass != "") {
                 list(path);
@@ -499,11 +499,11 @@ function render_search_result_list() {
     <ul class="mdui-list"> 
      <li class="mdui-list-item th"> 
       <div class="mdui-col-xs-12 mdui-col-sm-7">
-       文件
+       檔案
   <i class="mdui-icon material-icons icon-sort" data-sort="name" data-order="more">expand_more</i>
       </div> 
       <div class="mdui-col-sm-3 mdui-text-right">
-       修改时间
+       時間
   <i class="mdui-icon material-icons icon-sort" data-sort="date" data-order="downward">expand_more</i>
       </div> 
       <div class="mdui-col-sm-2 mdui-text-right">
@@ -516,7 +516,7 @@ function render_search_result_list() {
    <div class="mdui-row"> 
     <ul id="list" class="mdui-list"> 
     </ul> 
-    <div id="count" class="mdui-hidden mdui-center mdui-text-center mdui-m-b-3 mdui-typo-subheading mdui-text-color-blue-grey-500">共 <span class="number"></span> 项</div>
+    <div id="count" class="mdui-hidden mdui-center mdui-text-center mdui-m-b-3 mdui-typo-subheading mdui-text-color-blue-grey-500">共 <span class="number"></span> 項</div>
    </div>
   `;
     $('#content').html(content);
@@ -665,7 +665,7 @@ function onSearchResultItemClick(a_ele) {
     var cur = window.current_drive_order;
     var dialog = mdui.dialog({
         title: '',
-        content: '<div class="mdui-text-center mdui-typo-title mdui-m-b-1">正在获取目标路径...</div><div class="mdui-spinner mdui-spinner-colorful mdui-center"></div>',
+        content: '<div class="mdui-text-center mdui-typo-title mdui-m-b-1">正在讀取...</div><div class="mdui-spinner mdui-spinner-colorful mdui-center"></div>',
         // content: '<div class="mdui-spinner mdui-spinner-colorful mdui-center"></div>',
         history: false,
         modal: true,
@@ -685,23 +685,23 @@ function onSearchResultItemClick(a_ele) {
                 modal: true,
                 closeOnEsc: true,
                 buttons: [{
-                    text: '打开',
+                    text: '打開他',
                     onClick: function() {
                         window.location.href = href
                     }
                 }, {
-                    text: '新标签中打开',
+                    text: '分頁中打開他',
                     onClick: function() {
                         window.open(href)
                     }
-                }, { text: '取消' }]
+                }, { text: '不打開' }]
             });
             return;
         }
         dialog.close();
         dialog = mdui.dialog({
             title: 'Erro',
-            content: 'o(╯□╰)o 可能是因为该盘中并不存在此项！也可能因为没有把【与我共享】的文件添加到个人云端硬盘中！',
+            content: '哭阿，找不到，不要怪我',
             history: false,
             modal: true,
             closeOnEsc: true,
