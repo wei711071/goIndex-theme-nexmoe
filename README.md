@@ -1,4 +1,11 @@
-<!-- # GoIndex-theme-nexmoe -->
+done
+直接下載用
+隱藏md檔，可渲染
+閹割各種播放功能
+提高識別度dashboard→cloud
+繁體
+to do
+各種連結放於tool bar
 
 主题基于 [yanzai/goindex](https://github.com/yanzai/goindex)
 
