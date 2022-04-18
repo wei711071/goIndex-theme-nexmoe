@@ -129,7 +129,7 @@
 }
 
 .panBar_link > i:before {
-    content: "\E871";
+    content: "cloud";
 }
 
 .search_bar:hover form {
